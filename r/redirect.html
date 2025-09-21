@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Redirect</title>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+    <script>
+      function goTo(b64){
+        try{
+          const url = atob(b64);
+          location.replace(url);
+        }catch(e){
+          document.body.innerText = 'Invalid or malformed token.';
+        }
+      }
+
+      // 1) 如果有 query ?u=BASE64，使用它
+      const params = new URLSearchParams(location.search);
+      if(params.get('u')){
+        goTo(params.get('u'));
+      } else {
+        // 2) 否則使用 path 的最後一段作為 token： /r/<token>
+        const seg = location.pathname.split('/').filter(Boolean).pop();
+        if(seg){
+          goTo(seg.replace(/\.html$/i,''));
+        } else {
+          document.body.innerText = 'No token specified.';
+        }
+      }
+    </script>
+  </body>
+</html>
